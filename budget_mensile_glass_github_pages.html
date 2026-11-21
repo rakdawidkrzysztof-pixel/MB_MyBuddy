@@ -1,0 +1,1625 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Budget Mensile Glass — GitHub Pages</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg-base: #070b14;
+      --glass-bg: rgba(17, 25, 46, 0.62);
+      --glass-border: rgba(255, 255, 255, 0.12);
+      --glass-border-hover: rgba(255, 255, 255, 0.24);
+      --text-primary: #f8fafc;
+      --text-secondary: #94a3b8;
+    }
+
+    * {
+      box-sizing: border-box;
+      font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background-color: var(--bg-base);
+      color: var(--text-primary);
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      padding: 18px 14px;
+      position: relative;
+      overflow-x: hidden;
+    }
+
+    .ambient-glow {
+      position: fixed;
+      border-radius: 9999px;
+      filter: blur(110px);
+      pointer-events: none;
+      z-index: 0;
+      opacity: 0.4;
+    }
+
+    .glow-blue {
+      width: 400px;
+      height: 400px;
+      background: radial-gradient(circle, rgba(59, 130, 246, 0.55), transparent 70%);
+      top: -110px;
+      left: -80px;
+    }
+
+    .glow-emerald {
+      width: 360px;
+      height: 360px;
+      background: radial-gradient(circle, rgba(16, 185, 129, 0.42), transparent 70%);
+      bottom: -100px;
+      right: -70px;
+    }
+
+    .glass-shell {
+      position: relative;
+      z-index: 1;
+      width: 100%;
+      max-width: 840px;
+      background: var(--glass-bg);
+      backdrop-filter: blur(22px) saturate(140%);
+      -webkit-backdrop-filter: blur(22px) saturate(140%);
+      border: 1px solid var(--glass-border);
+      border-radius: 26px;
+      padding: 24px;
+      box-shadow: 0 25px 60px -15px rgba(0, 0, 0, 0.65), inset 0 1px 0 0 rgba(255, 255, 255, 0.14);
+    }
+
+    @media (max-width: 640px) {
+      .glass-shell {
+        padding: 18px 14px;
+        border-radius: 20px;
+      }
+    }
+
+    .glass-card {
+      background: rgba(15, 23, 42, 0.56);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      border: 1px solid var(--glass-border);
+      border-radius: 18px;
+      transition: border-color 0.2s ease, background 0.2s ease;
+    }
+
+    .glass-card:hover {
+      border-color: var(--glass-border-hover);
+      background: rgba(23, 35, 62, 0.68);
+    }
+
+    .euro-box {
+      display: flex;
+      align-items: center;
+      background: rgba(7, 11, 20, 0.68);
+      border: 1px solid rgba(255, 255, 255, 0.14);
+      border-radius: 12px;
+      padding: 6px 10px;
+    }
+
+    .euro-box:focus-within {
+      border-color: rgba(96, 165, 250, 0.75);
+      box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.18);
+    }
+
+    .euro-box input[type="number"] {
+      width: 102px;
+      background: transparent;
+      border: none;
+      outline: none;
+      color: var(--text-primary);
+      font-weight: 700;
+      font-size: 1rem;
+      text-align: right;
+      -moz-appearance: textfield;
+    }
+
+    .euro-box input[type="number"]::-webkit-outer-spin-button,
+    .euro-box input[type="number"]::-webkit-inner-spin-button {
+      -webkit-appearance: none;
+      margin: 0;
+    }
+
+    input[type="range"].glass-slider {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 100%;
+      height: 7px;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.12);
+      outline: none;
+      cursor: pointer;
+    }
+
+    input[type="range"].glass-slider::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      background: #60a5fa;
+      border: 2px solid #eff6ff;
+      box-shadow: 0 0 14px rgba(96, 165, 250, 0.8);
+      cursor: pointer;
+    }
+
+    .mode-pill-group {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+      background: rgba(7, 11, 20, 0.58);
+      border: 1px solid var(--glass-border);
+      padding: 6px;
+      border-radius: 16px;
+    }
+
+    @media (max-width: 560px) {
+      .mode-pill-group {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .mode-pill {
+      padding: 11px 14px;
+      border-radius: 12px;
+      font-size: 0.86rem;
+      font-weight: 600;
+      color: var(--text-secondary);
+      background: transparent;
+      border: 1px solid transparent;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .mode-pill.active {
+      color: var(--text-primary);
+      background: linear-gradient(135deg, rgba(59, 130, 246, 0.3), rgba(16, 185, 129, 0.2));
+      border-color: rgba(255, 255, 255, 0.24);
+    }
+
+    .nav-tabs {
+      display: inline-flex;
+      background: rgba(7, 11, 20, 0.65);
+      border: 1px solid var(--glass-border);
+      border-radius: 14px;
+      padding: 4px;
+      gap: 4px;
+    }
+
+    .nav-tab {
+      padding: 8px 14px;
+      border-radius: 10px;
+      font-size: 0.82rem;
+      font-weight: 600;
+      color: var(--text-secondary);
+      background: transparent;
+      border: 1px solid transparent;
+      cursor: pointer;
+    }
+
+    .nav-tab.active {
+      color: var(--text-primary);
+      background: rgba(255, 255, 255, 0.12);
+      border-color: rgba(255, 255, 255, 0.2);
+    }
+
+    .glass-input-control {
+      background: rgba(7, 11, 20, 0.68);
+      border: 1px solid rgba(255, 255, 255, 0.14);
+      border-radius: 12px;
+      padding: 8px 12px;
+      color: var(--text-primary);
+      font-size: 0.88rem;
+      font-weight: 600;
+      outline: none;
+    }
+
+    input[type="month"].glass-input-control {
+      color-scheme: dark;
+    }
+
+    .btn-glass-primary {
+      background: linear-gradient(135deg, rgba(59, 130, 246, 0.5), rgba(16, 185, 129, 0.38));
+      border: 1px solid rgba(255, 255, 255, 0.24);
+      color: #f8fafc;
+      font-weight: 700;
+      font-size: 0.84rem;
+      padding: 9px 15px;
+      border-radius: 12px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .btn-glass-primary:hover {
+      transform: translateY(-1px);
+      border-color: rgba(255, 255, 255, 0.38);
+    }
+
+    .btn-glass-secondary {
+      background: rgba(15, 23, 42, 0.68);
+      border: 1px solid var(--glass-border);
+      color: var(--text-primary);
+      font-weight: 600;
+      font-size: 0.8rem;
+      padding: 8px 12px;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .btn-glass-secondary:hover {
+      border-color: var(--glass-border-hover);
+      background: rgba(30, 41, 59, 0.82);
+    }
+
+    .btn-glass-danger {
+      background: rgba(239, 68, 68, 0.16);
+      border: 1px solid rgba(248, 113, 113, 0.32);
+      color: #fca5a5;
+      font-weight: 600;
+      font-size: 0.76rem;
+      padding: 6px 10px;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+
+    .btn-glass-danger:hover {
+      background: rgba(239, 68, 68, 0.3);
+    }
+
+    .donut-container {
+      position: relative;
+      width: 216px;
+      height: 216px;
+      margin: 0 auto;
+    }
+
+    .donut-svg {
+      width: 100%;
+      height: 100%;
+      transform: rotate(-90deg);
+    }
+
+    .donut-arc {
+      fill: none;
+      stroke-width: 24;
+      transition: stroke-dasharray 0.35s ease, stroke-dashoffset 0.35s ease;
+    }
+
+    .donut-center-overlay {
+      position: absolute;
+      inset: 28px;
+      border-radius: 9999px;
+      background: rgba(10, 16, 30, 0.78);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 10px;
+      pointer-events: none;
+    }
+  </style>
+</head>
+<body>
+  <div class="ambient-glow glow-blue" aria-hidden="true"></div>
+  <div class="ambient-glow glow-emerald" aria-hidden="true"></div>
+
+  <main class="glass-shell" id="budgetApp">
+    <!-- Intestazione + Login Google + Schede -->
+    <header class="mb-5 flex flex-col lg:flex-row lg:items-center lg:justify-between gap-3">
+      <div>
+        <div class="inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-sky-400 mb-1">
+          <span class="w-2 h-2 rounded-full bg-sky-400"></span>
+          GitHub Pages • 50-30-20 • MB-MyBuddy
+        </div>
+        <h1 class="text-2xl font-bold tracking-tight text-slate-50">
+          Budget Mensile Glass
+        </h1>
+      </div>
+
+      <div class="flex flex-wrap items-center gap-2">
+        <div id="authGuestControls" class="flex items-center gap-2">
+          <button type="button" id="btnGoogleLogin" class="btn-glass-secondary inline-flex items-center gap-2">
+            <span class="font-extrabold text-sky-400">G</span>
+            <span>Accedi con Google</span>
+          </button>
+        </div>
+        <div id="authUserControls" class="hidden items-center gap-2">
+          <span id="userBadge" class="text-xs font-semibold text-emerald-300 bg-emerald-500/10 border border-emerald-400/25 rounded-xl px-3 py-2"></span>
+          <button type="button" id="btnGoogleLogout" class="btn-glass-secondary">Esci</button>
+        </div>
+
+        <div class="nav-tabs" role="tablist">
+          <button type="button" id="tabCalculator" class="nav-tab active" role="tab" aria-selected="true" onclick="switchView('calculator')">
+            Calcolatore
+          </button>
+          <button type="button" id="tabReport" class="nav-tab" role="tab" aria-selected="false" onclick="switchView('report')">
+            Rendiconto (<span id="savedCountBadge">0</span>)
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <!-- Banner di stato / errori -->
+    <div id="statusBanner" role="status" aria-live="polite" class="hidden mb-4 rounded-2xl px-4 py-3 text-xs sm:text-sm font-medium border"></div>
+
+    <!-- Vista Calcolatore -->
+    <div id="calculatorView">
+      <section class="glass-card p-3.5 mb-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+        <div class="flex flex-wrap items-center gap-2.5">
+          <label for="monthPicker" class="text-xs font-semibold uppercase tracking-wider text-slate-300">
+            Mese di riferimento
+          </label>
+          <input type="month" id="monthPicker" class="glass-input-control" />
+        </div>
+        <div class="flex flex-wrap items-center gap-2">
+          <button type="button" id="btnResetZero" class="btn-glass-secondary" onclick="resetInputsToZero()">
+            Azzera (0 €)
+          </button>
+          <button type="button" id="btnSaveCalculation" class="btn-glass-primary" onclick="saveCurrentMonth()">
+            Salva mese
+          </button>
+        </div>
+      </section>
+
+      <section class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+        <div class="glass-card p-4">
+          <div class="flex items-center justify-between gap-3 mb-3">
+            <label for="incomeInput" class="text-sm font-semibold text-slate-200">
+              Reddito netto mensile
+            </label>
+            <div class="euro-box">
+              <span class="text-slate-400 font-semibold text-sm mr-1">€</span>
+              <input type="number" id="incomeInput" value="0" min="0" step="any" placeholder="0,00" />
+            </div>
+          </div>
+          <input type="range" id="incomeSlider" class="glass-slider" value="0" min="0" max="10000" step="10" />
+          <div class="flex justify-between text-[11px] text-slate-400 mt-1.5">
+            <span>0 €</span>
+            <span>Inserimento libero</span>
+            <span>10.000 €</span>
+          </div>
+        </div>
+
+        <div class="glass-card p-4 flex flex-col justify-between">
+          <div class="flex items-center justify-between gap-3 mb-2">
+            <label for="fixedInput" class="text-sm font-semibold text-slate-200">
+              Spese fisse (Bisogni)
+            </label>
+            <div class="euro-box">
+              <span class="text-slate-400 font-semibold text-sm mr-1">€</span>
+              <input type="number" id="fixedInput" value="0" min="0" step="any" placeholder="0,00" />
+            </div>
+          </div>
+          <div class="flex items-center justify-between text-xs text-slate-400 pt-1 border-t border-white/10">
+            <span>Valore iniziale</span>
+            <span class="font-medium text-sky-300">0,00 € (modificabile liberamente)</span>
+          </div>
+        </div>
+      </section>
+
+      <section class="mb-5">
+        <div class="mode-pill-group" role="tablist">
+          <button type="button" id="btnProporzionale" class="mode-pill active" role="tab" aria-selected="true" onclick="setMode('proporzionale')">
+            Proporzionale (60/40 sul resto)
+          </button>
+          <button type="button" id="btnRisparmio20" class="mode-pill" role="tab" aria-selected="false" onclick="setMode('risparmio_20')">
+            Risparmio fisso 20%
+          </button>
+        </div>
+      </section>
+
+      <div id="alertBox" role="alert" class="hidden mb-5 rounded-2xl px-4 py-3 text-sm font-medium border"></div>
+
+      <section class="grid grid-cols-1 md:grid-cols-[240px_1fr] gap-6 items-center">
+        <div class="glass-card p-4 flex flex-col items-center justify-center">
+          <div class="donut-container">
+            <svg class="donut-svg" viewBox="0 0 180 180">
+              <circle cx="90" cy="90" r="68" fill="none" stroke="rgba(255, 255, 255, 0.08)" stroke-width="24"></circle>
+              <circle id="arcBisogni" class="donut-arc" cx="90" cy="90" r="68" stroke="#60a5fa" onmouseenter="setCenterFocus('Bisogni', 'euroBisogni', 'pctBisogni', '#60a5fa')" onmouseleave="clearCenterFocus()"></circle>
+              <circle id="arcDesideri" class="donut-arc" cx="90" cy="90" r="68" stroke="#fbbf24" onmouseenter="setCenterFocus('Desideri', 'euroDesideri', 'pctDesideri', '#fbbf24')" onmouseleave="clearCenterFocus()"></circle>
+              <circle id="arcRisparmi" class="donut-arc" cx="90" cy="90" r="68" stroke="#34d399" onmouseenter="setCenterFocus('Risparmi', 'euroRisparmi', 'pctRisparmi', '#34d399')" onmouseleave="clearCenterFocus()"></circle>
+            </svg>
+            <div class="donut-center-overlay">
+              <span id="centerLabel" class="text-[11px] font-semibold uppercase tracking-wider text-slate-400">Netto mensile</span>
+              <span id="centerAmount" class="text-lg font-extrabold text-slate-50 mt-0.5 tabular-nums">0,00 €</span>
+              <span id="centerPct" class="text-xs font-semibold text-sky-300 mt-0.5 tabular-nums">0,0%</span>
+              <span id="centerRemaining" class="text-[10px] text-slate-400 mt-1 tabular-nums">Residuo: 0,00 €</span>
+            </div>
+          </div>
+          <p class="text-[11px] text-slate-400 mt-3 text-center">Passa sul grafico per ispezionare una quota</p>
+        </div>
+
+        <div class="flex flex-col gap-3">
+          <div class="glass-card p-4 flex items-center justify-between gap-4" onmouseenter="setCenterFocus('Bisogni', 'euroBisogni', 'pctBisogni', '#60a5fa')" onmouseleave="clearCenterFocus()">
+            <div class="flex items-center gap-3.5">
+              <span class="w-3.5 h-3.5 rounded-full bg-blue-400 shrink-0"></span>
+              <div>
+                <div class="text-sm font-bold text-slate-100">Bisogni</div>
+                <div class="text-xs text-slate-400">Spese fisse essenziali</div>
+              </div>
+            </div>
+            <div class="text-right tabular-nums">
+              <div id="euroBisogni" class="text-base font-extrabold text-slate-50">0,00 €</div>
+              <div id="pctBisogni" class="text-xs font-bold text-blue-400">0,0%</div>
+            </div>
+          </div>
+
+          <div class="glass-card p-4 flex items-center justify-between gap-4" onmouseenter="setCenterFocus('Desideri', 'euroDesideri', 'pctDesideri', '#fbbf24')" onmouseleave="clearCenterFocus()">
+            <div class="flex items-center gap-3.5">
+              <span class="w-3.5 h-3.5 rounded-full bg-amber-400 shrink-0"></span>
+              <div>
+                <div class="text-sm font-bold text-slate-100">Desideri</div>
+                <div id="subDesideri" class="text-xs text-slate-400">60% del residuo dopo spese fisse</div>
+              </div>
+            </div>
+            <div class="text-right tabular-nums">
+              <div id="euroDesideri" class="text-base font-extrabold text-slate-50">0,00 €</div>
+              <div id="pctDesideri" class="text-xs font-bold text-amber-400">0,0%</div>
+            </div>
+          </div>
+
+          <div class="glass-card p-4 flex items-center justify-between gap-4" onmouseenter="setCenterFocus('Risparmi', 'euroRisparmi', 'pctRisparmi', '#34d399')" onmouseleave="clearCenterFocus()">
+            <div class="flex items-center gap-3.5">
+              <span class="w-3.5 h-3.5 rounded-full bg-emerald-400 shrink-0"></span>
+              <div>
+                <div class="text-sm font-bold text-slate-100">Risparmi</div>
+                <div id="subRisparmi" class="text-xs text-slate-400">40% del residuo dopo spese fisse</div>
+              </div>
+            </div>
+            <div class="text-right tabular-nums">
+              <div id="euroRisparmi" class="text-base font-extrabold text-slate-50">0,00 €</div>
+              <div id="pctRisparmi" class="text-xs font-bold text-emerald-400">0,0%</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="glass-card p-4 mt-5">
+        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 mb-3">
+          <div>
+            <h2 class="text-sm font-bold text-slate-100">Calcoli salvati</h2>
+            <p class="text-xs text-slate-400">Ricarica o gestisci i mesi salvati</p>
+          </div>
+          <button type="button" class="btn-glass-secondary self-start sm:self-auto" onclick="switchView('report')">
+            Apri rendiconto completo →
+          </button>
+        </div>
+        <div id="quickSavedList" class="space-y-2 text-xs text-slate-300"></div>
+      </section>
+    </div>
+
+    <!-- Vista Rendiconto -->
+    <section id="reportView" class="hidden" aria-label="Rendiconto mensile salvato">
+      <div class="glass-card p-4 mb-4 flex flex-col lg:flex-row lg:items-center lg:justify-between gap-3">
+        <div class="flex flex-wrap items-center gap-2">
+          <label for="yearFilter" class="text-xs font-semibold text-slate-300">Anno:</label>
+          <select id="yearFilter" class="glass-input-control">
+            <option value="ALL">Tutti gli anni</option>
+          </select>
+          <button type="button" id="sortOrderBtn" class="btn-glass-secondary">Ordine: Più recenti ↓</button>
+          <span id="filteredMonthsCount" class="text-xs text-slate-400 ml-1">0 mesi</span>
+        </div>
+
+        <div class="flex flex-wrap items-center gap-2">
+          <button type="button" class="btn-glass-secondary" onclick="exportJSON()">Esporta JSON</button>
+          <button type="button" class="btn-glass-secondary" onclick="exportCSV()">Esporta CSV</button>
+          <label for="importFileInput" class="btn-glass-secondary cursor-pointer">Importa JSON</label>
+          <input type="file" id="importFileInput" accept="application/json,.json" class="hidden" />
+        </div>
+      </div>
+
+      <div class="grid grid-cols-2 sm:grid-cols-5 gap-3 mb-4">
+        <div class="glass-card p-3">
+          <div class="text-[11px] text-slate-400 font-semibold">Netto totale</div>
+          <div id="cumIncome" class="text-sm sm:text-base font-extrabold text-slate-50 mt-0.5 tabular-nums">0,00 €</div>
+        </div>
+        <div class="glass-card p-3">
+          <div class="text-[11px] text-blue-300 font-semibold">Bisogni tot.</div>
+          <div id="cumFixed" class="text-sm sm:text-base font-extrabold text-blue-300 mt-0.5 tabular-nums">0,00 €</div>
+        </div>
+        <div class="glass-card p-3">
+          <div class="text-[11px] text-amber-300 font-semibold">Desideri tot.</div>
+          <div id="cumWants" class="text-sm sm:text-base font-extrabold text-amber-300 mt-0.5 tabular-nums">0,00 €</div>
+        </div>
+        <div class="glass-card p-3">
+          <div class="text-[11px] text-emerald-300 font-semibold">Risparmi tot.</div>
+          <div id="cumSavings" class="text-sm sm:text-base font-extrabold text-emerald-300 mt-0.5 tabular-nums">0,00 €</div>
+        </div>
+        <div class="glass-card p-3 col-span-2 sm:col-span-1">
+          <div class="text-[11px] text-slate-400 font-semibold">Media risparmio</div>
+          <div id="avgSavings" class="text-sm sm:text-base font-extrabold text-slate-100 mt-0.5 tabular-nums">0,00 €</div>
+        </div>
+      </div>
+
+      <div class="glass-card overflow-x-auto">
+        <table class="w-full text-left border-collapse text-sm">
+          <thead>
+            <tr class="border-b border-white/15 text-[11px] uppercase tracking-wider text-slate-400">
+              <th class="py-3 px-3">Mese</th>
+              <th class="py-3 px-3 text-right">Netto</th>
+              <th class="py-3 px-3 text-right">Bisogni</th>
+              <th class="py-3 px-3 text-right">Desideri</th>
+              <th class="py-3 px-3 text-right">Risparmi</th>
+              <th class="py-3 px-3">Regola</th>
+              <th class="py-3 px-3 text-right">Azioni</th>
+            </tr>
+          </thead>
+          <tbody id="reportTableBody"></tbody>
+        </table>
+        <div id="reportEmptyState" class="hidden py-10 px-4 text-center text-sm text-slate-400">
+          Nessun calcolo mensile salvato al momento. Torna al Calcolatore oppure usa <strong class="text-slate-200">Importa JSON</strong> per caricare il backup dell'app.
+        </div>
+      </div>
+    </section>
+
+    <!-- Modale di conferma in-app -->
+    <div id="confirmModal" role="dialog" aria-modal="true" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-slate-950/75 backdrop-blur-sm p-4">
+      <div class="glass-card w-full max-w-md p-5 border border-white/20">
+        <h3 id="confirmModalTitle" class="text-base font-bold text-slate-50 mb-2">Conferma operazione</h3>
+        <p id="confirmModalMessage" class="text-xs sm:text-sm text-slate-300 mb-5"></p>
+        <div class="flex justify-end gap-2">
+          <button type="button" id="confirmModalCancel" class="btn-glass-secondary">Annulla</button>
+          <button type="button" id="confirmModalOk" class="btn-glass-primary">Conferma</button>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/13.4.0/firebase-app.js";
+    import {
+      getAuth,
+      GoogleAuthProvider,
+      setPersistence,
+      browserLocalPersistence,
+      signInWithPopup,
+      signInWithRedirect,
+      signOut,
+      onAuthStateChanged
+    } from "https://www.gstatic.com/firebasejs/13.4.0/firebase-auth.js";
+    import {
+      getFirestore,
+      doc,
+      setDoc,
+      deleteDoc,
+      onSnapshot,
+      collection
+    } from "https://www.gstatic.com/firebasejs/13.4.0/firebase-firestore.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyAuAJIie14SJxaCx5vRGXsf12XYZ4Zq5MI",
+      authDomain: "mb-mybuddy.firebaseapp.com",
+      projectId: "mb-mybuddy",
+      storageBucket: "mb-mybuddy.firebasestorage.app",
+      messagingSenderId: "992169897384",
+      appId: "1:992169897384:web:17e1ba2bd6f3364b85c19d",
+      measurementId: "G-NV3PX0R50Z"
+    };
+
+    const STORAGE_KEY = 'budgetGlassMonthlyRecords_v1';
+    const SESSION_EXPIRY_KEY = 'budgetGlassSessionExpiry_v1';
+    const SESSION_DURATION_MS = 10 * 60 * 1000;
+    const DONUT_RADIUS = 68;
+    const DONUT_CIRCUMFERENCE = 2 * Math.PI * DONUT_RADIUS;
+
+    let currentMode = 'proporzionale';
+    let currentView = 'calculator';
+    let sortDirection = 'desc';
+    let records = [];
+    let auth = null;
+    let db = null;
+    let currentUser = null;
+    let unsubscribeSnapshot = null;
+    let unsubscribeSessionDoc = null;
+    let sessionExpiryTimeoutId = null;
+    let sessionTickIntervalId = null;
+    let activeExpiryMs = 0;
+    let latestCalculation = {
+      income: 0,
+      fixed: 0,
+      remaining: 0,
+      wants: 0,
+      savings: 0,
+      pctFixed: 0,
+      pctWants: 0,
+      pctSavings: 0
+    };
+
+    const monthPicker = document.getElementById('monthPicker');
+    const incomeInput = document.getElementById('incomeInput');
+    const incomeSlider = document.getElementById('incomeSlider');
+    const fixedInput = document.getElementById('fixedInput');
+    const alertBox = document.getElementById('alertBox');
+    const statusBanner = document.getElementById('statusBanner');
+
+    function round2(num) {
+      const n = Number(num);
+      return Number.isFinite(n) ? Math.round(n * 100) / 100 : 0;
+    }
+
+    function formatEuro(value) {
+      const safe = Number.isFinite(value) ? value : 0;
+      return safe.toLocaleString('it-IT', {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2
+      }) + ' €';
+    }
+
+    function formatPercent(value) {
+      const safe = Number.isFinite(value) ? value : 0;
+      return safe.toLocaleString('it-IT', {
+        minimumFractionDigits: 1,
+        maximumFractionDigits: 1
+      }) + '%';
+    }
+
+    function getCurrentYearMonth() {
+      const now = new Date();
+      return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`;
+    }
+
+    function formatYearMonthLabel(ym) {
+      if (!ym || !/^\d{4}-\d{2}$/.test(ym)) return ym || 'N/D';
+      const [year, month] = ym.split('-').map(Number);
+      const dt = new Date(year, month - 1, 1);
+      return dt.toLocaleDateString('it-IT', { month: 'long', year: 'numeric' });
+    }
+
+    function askConfirmation(title, message) {
+      return new Promise((resolve) => {
+        const modal = document.getElementById('confirmModal');
+        const titleEl = document.getElementById('confirmModalTitle');
+        const msgEl = document.getElementById('confirmModalMessage');
+        const okBtn = document.getElementById('confirmModalOk');
+        const cancelBtn = document.getElementById('confirmModalCancel');
+
+        if (!modal || !okBtn || !cancelBtn) {
+          resolve(true);
+          return;
+        }
+
+        titleEl.textContent = title;
+        msgEl.textContent = message;
+        modal.classList.remove('hidden');
+
+        const cleanup = (result) => {
+          modal.classList.add('hidden');
+          okBtn.removeEventListener('click', onOk);
+          cancelBtn.removeEventListener('click', onCancel);
+          resolve(result);
+        };
+
+        const onOk = () => cleanup(true);
+        const onCancel = () => cleanup(false);
+
+        okBtn.addEventListener('click', onOk);
+        cancelBtn.addEventListener('click', onCancel);
+      });
+    }
+
+    function showStatus(message, type = 'info') {
+      if (!statusBanner) return;
+      statusBanner.classList.remove(
+        'hidden',
+        'bg-emerald-500/15', 'border-emerald-400/35', 'text-emerald-200',
+        'bg-red-500/15', 'border-red-400/35', 'text-red-200',
+        'bg-sky-500/15', 'border-sky-400/35', 'text-sky-200'
+      );
+
+      if (type === 'success') {
+        statusBanner.classList.add('bg-emerald-500/15', 'border-emerald-400/35', 'text-emerald-200');
+      } else if (type === 'error') {
+        statusBanner.classList.add('bg-red-500/15', 'border-red-400/35', 'text-red-200');
+      } else {
+        statusBanner.classList.add('bg-sky-500/15', 'border-sky-400/35', 'text-sky-200');
+      }
+      statusBanner.textContent = message;
+    }
+
+    function hideStatus() {
+      if (!statusBanner) return;
+      statusBanner.classList.add('hidden');
+      statusBanner.textContent = '';
+    }
+
+    function loadLocalRecords() {
+      try {
+        const raw = localStorage.getItem(STORAGE_KEY);
+        if (!raw) {
+          records = [];
+          return;
+        }
+        const parsed = JSON.parse(raw);
+        records = Array.isArray(parsed) ? parsed : [];
+      } catch (err) {
+        records = [];
+      }
+    }
+
+    function persistLocalRecords() {
+      try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(records));
+        return true;
+      } catch (err) {
+        return false;
+      }
+    }
+
+    function updateAuthUI(user) {
+      const guestBox = document.getElementById('authGuestControls');
+      const userBox = document.getElementById('authUserControls');
+      const badge = document.getElementById('userBadge');
+
+      if (user && !user.isAnonymous) {
+        guestBox?.classList.add('hidden');
+        userBox?.classList.remove('hidden');
+        userBox?.classList.add('flex');
+        if (badge) {
+          const leftSec = activeExpiryMs > Date.now()
+            ? Math.max(0, Math.ceil((activeExpiryMs - Date.now()) / 1000))
+            : 0;
+          const mins = Math.floor(leftSec / 60);
+          const secs = leftSec % 60;
+          badge.textContent = `✓ ${user.displayName || user.email || 'Account Google'} (${mins}:${String(secs).padStart(2, '0')})`;
+        }
+      } else {
+        guestBox?.classList.remove('hidden');
+        userBox?.classList.add('hidden');
+        userBox?.classList.remove('flex');
+      }
+    }
+
+    function stopSessionTimers() {
+      if (sessionExpiryTimeoutId) {
+        clearTimeout(sessionExpiryTimeoutId);
+        sessionExpiryTimeoutId = null;
+      }
+      if (sessionTickIntervalId) {
+        clearInterval(sessionTickIntervalId);
+        sessionTickIntervalId = null;
+      }
+    }
+
+    function saveExpiryLocal(expiryMs) {
+      activeExpiryMs = expiryMs;
+      try {
+        if (expiryMs > 0) {
+          localStorage.setItem(SESSION_EXPIRY_KEY, String(expiryMs));
+        } else {
+          localStorage.removeItem(SESSION_EXPIRY_KEY);
+        }
+      } catch (err) {
+        // Ignora eventuali errori di storage
+      }
+    }
+
+    function readExpiryLocal() {
+      try {
+        const raw = localStorage.getItem(SESSION_EXPIRY_KEY);
+        const val = Number(raw);
+        return Number.isFinite(val) && val > 0 ? val : 0;
+      } catch (err) {
+        return 0;
+      }
+    }
+
+    async function syncSessionExpiryToCloud(uid, expiryMs) {
+      if (!db || !uid) return;
+      try {
+        await setDoc(
+          doc(db, 'budget_sites_users', uid, 'session', 'meta'),
+          {
+            expiresAt: expiryMs,
+            updatedAt: new Date().toISOString()
+          },
+          { merge: true }
+        );
+      } catch (err) {
+        // Ignora se non autorizzato
+      }
+    }
+
+    async function forceLogoutDueToExpiry() {
+      stopSessionTimers();
+      activeExpiryMs = 0;
+      saveExpiryLocal(0);
+      if (unsubscribeSessionDoc) {
+        unsubscribeSessionDoc();
+        unsubscribeSessionDoc = null;
+      }
+      if (unsubscribeSnapshot) {
+        unsubscribeSnapshot();
+        unsubscribeSnapshot = null;
+      }
+      if (auth && auth.currentUser) {
+        try {
+          await signOut(auth);
+        } catch (err) {
+          // Ignora errore signOut
+        }
+      }
+      currentUser = null;
+      updateAuthUI(null);
+      showStatus('Sessione Google terminata automaticamente dopo 10 minuti. Accedi di nuovo se necessario.', 'info');
+    }
+
+    function scheduleTenMinuteSession(user, explicitExpiryMs = 0) {
+      stopSessionTimers();
+      if (!user || user.isAnonymous) return;
+
+      const now = Date.now();
+      const targetExpiry = explicitExpiryMs > 0 ? explicitExpiryMs : (now + SESSION_DURATION_MS);
+      activeExpiryMs = targetExpiry;
+      saveExpiryLocal(targetExpiry);
+      updateAuthUI(user);
+
+      const remainingMs = targetExpiry - now;
+      if (remainingMs <= 0) {
+        void forceLogoutDueToExpiry();
+        return;
+      }
+
+      sessionTickIntervalId = setInterval(() => {
+        if (!currentUser || currentUser.isAnonymous) {
+          stopSessionTimers();
+          return;
+        }
+        if (Date.now() >= activeExpiryMs) {
+          void forceLogoutDueToExpiry();
+          return;
+        }
+        updateAuthUI(currentUser);
+      }, 1000);
+
+      sessionExpiryTimeoutId = setTimeout(() => {
+        void forceLogoutDueToExpiry();
+      }, remainingMs);
+    }
+
+    function bindUserSessionWatcher(uid) {
+      if (unsubscribeSessionDoc) {
+        unsubscribeSessionDoc();
+        unsubscribeSessionDoc = null;
+      }
+      if (!db || !uid) return;
+
+      unsubscribeSessionDoc = onSnapshot(
+        doc(db, 'budget_sites_users', uid, 'session', 'meta'),
+        (snap) => {
+          if (!snap.exists()) return;
+          const data = snap.data();
+          const cloudExpiry = Number(data?.expiresAt || 0);
+          if (cloudExpiry > 0 && currentUser && currentUser.uid === uid) {
+            if (Date.now() >= cloudExpiry) {
+              void forceLogoutDueToExpiry();
+            } else if (Math.abs(cloudExpiry - activeExpiryMs) > 1500) {
+              scheduleTenMinuteSession(currentUser, cloudExpiry);
+            }
+          }
+        },
+        () => {
+          // Ignora errori snapshot sessione
+        }
+      );
+    }
+
+    function bindUserFirestore(uid) {
+      if (unsubscribeSnapshot) {
+        unsubscribeSnapshot();
+        unsubscribeSnapshot = null;
+      }
+      if (!db || !uid) return;
+
+      const colRef = collection(db, 'budget_sites_users', uid, 'months');
+      unsubscribeSnapshot = onSnapshot(
+        colRef,
+        (snapshot) => {
+          const cloudList = [];
+          snapshot.forEach((docSnap) => {
+            const d = docSnap.data();
+            const ym = d?.yearMonth || docSnap.id;
+            if (typeof ym === 'string' && /^\d{4}-\d{2}$/.test(ym)) {
+              cloudList.push({
+                yearMonth: ym,
+                income: round2(d.income),
+                fixed: round2(d.fixed),
+                remaining: round2(d.remaining),
+                wants: round2(d.wants),
+                savings: round2(d.savings),
+                mode: d.mode === 'risparmio_20' ? 'risparmio_20' : 'proporzionale',
+                updatedAt: d.updatedAt || new Date().toISOString()
+              });
+            }
+          });
+          if (cloudList.length > 0) {
+            records = cloudList;
+            persistLocalRecords();
+          }
+          refreshAllRecordViews();
+        },
+        (err) => {
+          if (err?.code === 'permission-denied') {
+            showStatus('Accesso eseguito, ma Firestore ha negato la lettura/scrittura: verifica le Regole di Firestore su Firebase.', 'error');
+          }
+        }
+      );
+    }
+
+    async function handleGoogleLogin() {
+      if (!auth) return;
+      const provider = new GoogleAuthProvider();
+      provider.setCustomParameters({ prompt: 'select_account' });
+      try {
+        await setPersistence(auth, browserLocalPersistence);
+        const cred = await signInWithPopup(auth, provider);
+        if (cred?.user) {
+          const nextExpiry = Date.now() + SESSION_DURATION_MS;
+          currentUser = cred.user;
+          scheduleTenMinuteSession(cred.user, nextExpiry);
+          await syncSessionExpiryToCloud(cred.user.uid, nextExpiry);
+          bindUserSessionWatcher(cred.user.uid);
+          bindUserFirestore(cred.user.uid);
+          showStatus('Accesso Google effettuato: sessione attiva per 10 minuti.', 'success');
+        }
+      } catch (err) {
+        if (err?.code === 'auth/popup-blocked' || err?.code === 'auth/operation-not-supported-in-this-environment') {
+          await signInWithRedirect(auth, provider);
+          return;
+        }
+        const code = err?.code || 'errore-sconosciuto';
+        showStatus(`Impossibile completare Accedi con Google (${code}). Verifica Provider Google e Domini autorizzati su Firebase.`, 'error');
+      }
+    }
+
+    async function handleGoogleLogout() {
+      stopSessionTimers();
+      activeExpiryMs = 0;
+      saveExpiryLocal(0);
+      if (unsubscribeSessionDoc) {
+        unsubscribeSessionDoc();
+        unsubscribeSessionDoc = null;
+      }
+      if (!auth) return;
+      try {
+        await signOut(auth);
+        currentUser = null;
+        updateAuthUI(null);
+        showStatus('Disconnesso dall\'account Google.', 'info');
+      } catch (err) {
+        showStatus('Errore durante la disconnessione.', 'error');
+      }
+    }
+
+    function initFirebase() {
+      loadLocalRecords();
+      refreshAllRecordViews();
+
+      try {
+        const app = initializeApp(firebaseConfig);
+        auth = getAuth(app);
+        db = getFirestore(app);
+
+        void setPersistence(auth, browserLocalPersistence).catch(() => {
+          // Ignora eventuale errore persistenza
+        });
+
+        onAuthStateChanged(auth, (user) => {
+          if (user && !user.isAnonymous) {
+            currentUser = user;
+            const localExp = readExpiryLocal();
+            const now = Date.now();
+            if (localExp > 0 && now >= localExp) {
+              void forceLogoutDueToExpiry();
+              return;
+            }
+            const targetExpiry = localExp > now ? localExp : (now + SESSION_DURATION_MS);
+            scheduleTenMinuteSession(user, targetExpiry);
+            void syncSessionExpiryToCloud(user.uid, targetExpiry);
+            bindUserSessionWatcher(user.uid);
+            bindUserFirestore(user.uid);
+          } else {
+            currentUser = null;
+            stopSessionTimers();
+            if (unsubscribeSessionDoc) {
+              unsubscribeSessionDoc();
+              unsubscribeSessionDoc = null;
+            }
+            if (unsubscribeSnapshot) {
+              unsubscribeSnapshot();
+              unsubscribeSnapshot = null;
+            }
+            updateAuthUI(null);
+          }
+        });
+      } catch (err) {
+        showStatus('Modalità locale attiva: impossibile inizializzare Firebase.', 'info');
+      }
+    }
+
+    function refreshAllRecordViews() {
+      updateSavedCountBadge();
+      renderQuickSavedList();
+      if (currentView === 'report') {
+        renderReport();
+      }
+    }
+
+    function switchView(viewName) {
+      currentView = viewName === 'report' ? 'report' : 'calculator';
+      const isReport = currentView === 'report';
+      document.getElementById('calculatorView')?.classList.toggle('hidden', isReport);
+      document.getElementById('reportView')?.classList.toggle('hidden', !isReport);
+
+      const tabCalc = document.getElementById('tabCalculator');
+      const tabReport = document.getElementById('tabReport');
+      tabCalc?.classList.toggle('active', !isReport);
+      tabCalc?.setAttribute('aria-selected', String(!isReport));
+      tabReport?.classList.toggle('active', isReport);
+      tabReport?.setAttribute('aria-selected', String(isReport));
+
+      if (isReport) {
+        renderReport();
+      }
+    }
+
+    function resetInputsToZero() {
+      hideStatus();
+      incomeInput.value = '0';
+      fixedInput.value = '0';
+      incomeSlider.value = '0';
+      calculateBudget();
+      showStatus('Reddito netto e spese fisse reimpostati a 0,00 €.', 'info');
+    }
+
+    function renderQuickSavedList() {
+      const container = document.getElementById('quickSavedList');
+      if (!container) return;
+
+      if (!records.length) {
+        container.innerHTML = '<div class="text-slate-400">Nessun calcolo salvato ancora. Imposta i valori e clicca su <span class="text-slate-200 font-semibold">Salva mese</span> oppure importa il tuo file JSON.</div>';
+        return;
+      }
+
+      const recent = [...records]
+        .sort((a, b) => String(b.yearMonth).localeCompare(String(a.yearMonth)))
+        .slice(0, 4);
+
+      container.innerHTML = recent
+        .map((item) => `
+          <div class="flex flex-wrap items-center justify-between gap-2 rounded-xl border border-white/10 bg-slate-950/45 px-3 py-2">
+            <div class="flex flex-wrap items-center gap-x-3 gap-y-1 tabular-nums">
+              <span class="font-bold text-slate-100">${formatYearMonthLabel(item.yearMonth)}</span>
+              <span class="text-slate-300">Netto: <strong>${formatEuro(round2(item.income))}</strong></span>
+              <span class="text-blue-300">Fisse: ${formatEuro(round2(item.fixed))}</span>
+              <span class="text-amber-300">Desideri: ${formatEuro(round2(item.wants))}</span>
+              <span class="text-emerald-300">Risparmi: ${formatEuro(round2(item.savings))}</span>
+            </div>
+            <button type="button" class="btn-glass-secondary" onclick="loadRecordIntoCalculator('${item.yearMonth}')">
+              Carica
+            </button>
+          </div>
+        `)
+        .join('');
+    }
+
+    async function saveCurrentMonth() {
+      hideStatus();
+      const ym = monthPicker.value;
+      if (!ym || !/^\d{4}-\d{2}$/.test(ym)) {
+        showStatus('Seleziona un mese e un anno validi prima di salvare.', 'error');
+        return;
+      }
+
+      const existingIndex = records.findIndex((item) => item.yearMonth === ym);
+      if (existingIndex !== -1) {
+        const confirmed = await askConfirmation(
+          'Aggiorna rendiconto mensile',
+          `Esiste già un rendiconto salvato per ${formatYearMonthLabel(ym)}. Vuoi aggiornarlo?`
+        );
+        if (!confirmed) return;
+      }
+
+      const entry = {
+        yearMonth: ym,
+        income: round2(latestCalculation.income),
+        fixed: round2(latestCalculation.fixed),
+        remaining: round2(latestCalculation.remaining),
+        wants: round2(latestCalculation.wants),
+        savings: round2(latestCalculation.savings),
+        mode: currentMode,
+        updatedAt: new Date().toISOString()
+      };
+
+      if (existingIndex !== -1) {
+        records[existingIndex] = entry;
+      } else {
+        records.push(entry);
+      }
+
+      persistLocalRecords();
+
+      if (db && currentUser && !currentUser.isAnonymous) {
+        try {
+          await setDoc(doc(db, 'budget_sites_users', currentUser.uid, 'months', ym), entry, { merge: true });
+        } catch (err) {
+          showStatus('Salvato in locale, ma errore su Firestore (verifica Regole di sicurezza).', 'error');
+          refreshAllRecordViews();
+          return;
+        }
+      }
+
+      refreshAllRecordViews();
+      showStatus(`Mese ${formatYearMonthLabel(ym)} salvato.`, 'success');
+    }
+
+    function updateSavedCountBadge() {
+      const badge = document.getElementById('savedCountBadge');
+      if (badge) badge.textContent = String(records.length);
+    }
+
+    function loadRecordIntoCalculator(ym) {
+      const found = records.find((r) => r.yearMonth === ym);
+      if (!found) return;
+      monthPicker.value = found.yearMonth;
+      incomeInput.value = String(found.income ?? 0);
+      fixedInput.value = String(found.fixed ?? 0);
+      syncSliderWithInput();
+      setMode(found.mode === 'risparmio_20' ? 'risparmio_20' : 'proporzionale');
+      switchView('calculator');
+      showStatus(`Caricati i dati di ${formatYearMonthLabel(found.yearMonth)}.`, 'info');
+    }
+
+    async function deleteRecord(ym) {
+      const found = records.find((r) => r.yearMonth === ym);
+      if (!found) return;
+
+      const confirmed = await askConfirmation(
+        'Elimina mese dal rendiconto',
+        `Vuoi eliminare definitivamente il mese ${formatYearMonthLabel(ym)}?`
+      );
+      if (!confirmed) return;
+
+      records = records.filter((r) => r.yearMonth !== ym);
+      persistLocalRecords();
+
+      if (db && currentUser && !currentUser.isAnonymous) {
+        try {
+          await deleteDoc(doc(db, 'budget_sites_users', currentUser.uid, 'months', ym));
+        } catch (err) {
+          showStatus('Rimosso in locale, ma errore durante la rimozione su Firestore.', 'error');
+          refreshAllRecordViews();
+          return;
+        }
+      }
+
+      refreshAllRecordViews();
+      showStatus(`Eliminato il mese ${formatYearMonthLabel(ym)}.`, 'info');
+    }
+
+    function syncSliderWithInput() {
+      const val = parseFloat(incomeInput.value);
+      if (!Number.isNaN(val)) {
+        const clampedSlider = Math.max(parseFloat(incomeSlider.min), Math.min(parseFloat(incomeSlider.max), val));
+        incomeSlider.value = String(clampedSlider);
+      }
+    }
+
+    function renderReport() {
+      const yearFilterEl = document.getElementById('yearFilter');
+      const tableBody = document.getElementById('reportTableBody');
+      const emptyState = document.getElementById('reportEmptyState');
+      const sortBtn = document.getElementById('sortOrderBtn');
+
+      if (sortBtn) {
+        sortBtn.textContent = sortDirection === 'desc' ? 'Ordine: Più recenti ↓' : 'Ordine: Più vecchi ↑';
+      }
+
+      const years = Array.from(
+        new Set(
+          records
+            .map((r) => (r.yearMonth && /^\d{4}-\d{2}$/.test(r.yearMonth) ? r.yearMonth.slice(0, 4) : null))
+            .filter(Boolean)
+        )
+      ).sort((a, b) => b.localeCompare(a));
+
+      const previousSelection = yearFilterEl.value;
+      yearFilterEl.innerHTML = '<option value="ALL">Tutti gli anni</option>' +
+        years.map((y) => `<option value="${y}">${y}</option>`).join('');
+      yearFilterEl.value = (previousSelection === 'ALL' || years.includes(previousSelection)) ? previousSelection : 'ALL';
+
+      const selectedYear = yearFilterEl.value;
+      const filtered = records
+        .filter((r) => selectedYear === 'ALL' || (r.yearMonth && r.yearMonth.startsWith(`${selectedYear}-`)))
+        .sort((a, b) => {
+          const cmp = String(a.yearMonth).localeCompare(String(b.yearMonth));
+          return sortDirection === 'desc' ? -cmp : cmp;
+        });
+
+      const totals = filtered.reduce(
+        (acc, r) => {
+          acc.income += round2(r.income);
+          acc.fixed += round2(r.fixed);
+          acc.wants += round2(r.wants);
+          acc.savings += round2(r.savings);
+          return acc;
+        },
+        { income: 0, fixed: 0, wants: 0, savings: 0 }
+      );
+
+      document.getElementById('cumIncome').textContent = formatEuro(totals.income);
+      document.getElementById('cumFixed').textContent = formatEuro(totals.fixed);
+      document.getElementById('cumWants').textContent = formatEuro(totals.wants);
+      document.getElementById('cumSavings').textContent = formatEuro(totals.savings);
+      document.getElementById('avgSavings').textContent = formatEuro(filtered.length > 0 ? totals.savings / filtered.length : 0);
+      document.getElementById('filteredMonthsCount').textContent = `${filtered.length} ${filtered.length === 1 ? 'mese' : 'mesi'}`;
+
+      if (filtered.length === 0) {
+        tableBody.innerHTML = '';
+        emptyState.classList.remove('hidden');
+        return;
+      }
+
+      emptyState.classList.add('hidden');
+      tableBody.innerHTML = filtered
+        .map((r) => {
+          const modeLabel = r.mode === 'risparmio_20' ? '20% Fisso' : '60/40 Resto';
+          return `
+            <tr class="border-b border-white/10 hover:bg-white/[0.03]">
+              <td class="py-3 px-3 font-semibold text-slate-100 whitespace-nowrap">${formatYearMonthLabel(r.yearMonth)}</td>
+              <td class="py-3 px-3 text-right tabular-nums text-slate-200 font-semibold whitespace-nowrap">${formatEuro(round2(r.income))}</td>
+              <td class="py-3 px-3 text-right tabular-nums text-blue-300 whitespace-nowrap">${formatEuro(round2(r.fixed))}</td>
+              <td class="py-3 px-3 text-right tabular-nums text-amber-300 whitespace-nowrap">${formatEuro(round2(r.wants))}</td>
+              <td class="py-3 px-3 text-right tabular-nums text-emerald-300 font-semibold whitespace-nowrap">${formatEuro(round2(r.savings))}</td>
+              <td class="py-3 px-3 text-xs text-slate-400 whitespace-nowrap">${modeLabel}</td>
+              <td class="py-3 px-3 text-right whitespace-nowrap">
+                <div class="inline-flex items-center gap-1.5">
+                  <button type="button" class="btn-glass-secondary" onclick="loadRecordIntoCalculator('${r.yearMonth}')">Apri</button>
+                  <button type="button" class="btn-glass-danger" onclick="deleteRecord('${r.yearMonth}')">Elimina</button>
+                </div>
+              </td>
+            </tr>
+          `;
+        })
+        .join('');
+    }
+
+    function triggerDownload(filename, content, mimeType) {
+      const blob = new Blob([content], { type: mimeType });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = filename;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    }
+
+    function exportJSON() {
+      const payload = {
+        app: 'Budget Mensile Glass 50-30-20',
+        exportedAt: new Date().toISOString(),
+        records
+      };
+      triggerDownload(
+        `rendiconto-budget-${getCurrentYearMonth()}.json`,
+        JSON.stringify(payload, null, 2),
+        'application/json;charset=utf-8'
+      );
+      showStatus('Rendiconto esportato in formato JSON.', 'success');
+    }
+
+    function exportCSV() {
+      const headers = ['Mese', 'AnnoMese', 'Netto', 'SpeseFisse', 'Residuo', 'Desideri', 'Risparmi', 'Modalita'];
+      const sorted = [...records].sort((a, b) => String(a.yearMonth).localeCompare(String(b.yearMonth)));
+      const rows = sorted.map((r) => [
+        `"${formatYearMonthLabel(r.yearMonth)}"`,
+        r.yearMonth,
+        round2(r.income).toFixed(2),
+        round2(r.fixed).toFixed(2),
+        round2(r.remaining).toFixed(2),
+        round2(r.wants).toFixed(2),
+        round2(r.savings).toFixed(2),
+        r.mode === 'risparmio_20' ? 'risparmio_20' : 'proporzionale'
+      ].join(';'));
+      triggerDownload(
+        `rendiconto-budget-${getCurrentYearMonth()}.csv`,
+        '\uFEFF' + [headers.join(';'), ...rows].join('\n'),
+        'text/csv;charset=utf-8'
+      );
+      showStatus('Rendiconto esportato in formato CSV.', 'success');
+    }
+
+    function handleImportJSON(event) {
+      const file = event.target.files?.[0];
+      if (!file) return;
+
+      const reader = new FileReader();
+      reader.onload = async () => {
+        try {
+          const text = String(reader.result || '').replace(/^\uFEFF/, '').trim();
+          const parsed = JSON.parse(text);
+          const incomingList = Array.isArray(parsed) ? parsed : Array.isArray(parsed?.records) ? parsed.records : null;
+
+          if (!incomingList) {
+            showStatus('File JSON non valido: manca l\'elenco dei record.', 'error');
+            return;
+          }
+
+          let importedCount = 0;
+          const entriesToSync = [];
+
+          incomingList.forEach((item) => {
+            if (!item || typeof item.yearMonth !== 'string' || !/^\d{4}-\d{2}$/.test(item.yearMonth)) {
+              return;
+            }
+            const income = Math.max(0, round2(item.income));
+            const fixed = Math.max(0, round2(item.fixed));
+            const remaining = Math.max(0, round2(income - fixed));
+            const mode = item.mode === 'risparmio_20' ? 'risparmio_20' : 'proporzionale';
+
+            let wants = Number(item.wants);
+            let savings = Number(item.savings);
+
+            if (!Number.isFinite(wants) || !Number.isFinite(savings)) {
+              if (mode === 'proporzionale') {
+                wants = remaining * 0.60;
+                savings = remaining * 0.40;
+              } else {
+                savings = Math.min(remaining, income * 0.20);
+                wants = Math.max(0, remaining - savings);
+              }
+            }
+
+            const cleanEntry = {
+              yearMonth: item.yearMonth,
+              income,
+              fixed,
+              remaining,
+              wants: Math.max(0, round2(wants)),
+              savings: Math.max(0, round2(savings)),
+              mode,
+              updatedAt: item.updatedAt || new Date().toISOString()
+            };
+
+            const idx = records.findIndex((existing) => existing.yearMonth === cleanEntry.yearMonth);
+            if (idx !== -1) {
+              records[idx] = cleanEntry;
+            } else {
+              records.push(cleanEntry);
+            }
+            entriesToSync.push(cleanEntry);
+            importedCount += 1;
+          });
+
+          if (importedCount === 0) {
+            showStatus('Nessun mese valido trovato nel file JSON.', 'error');
+            return;
+          }
+
+          persistLocalRecords();
+
+          let cloudBlocked = false;
+          if (db && currentUser && !currentUser.isAnonymous) {
+            await Promise.all(
+              entriesToSync.map((entry) =>
+                setDoc(
+                  doc(db, 'budget_sites_users', currentUser.uid, 'months', entry.yearMonth),
+                  entry,
+                  { merge: true }
+                ).catch(() => {
+                  cloudBlocked = true;
+                })
+              )
+            );
+          }
+
+          refreshAllRecordViews();
+          if (cloudBlocked) {
+            showStatus(`Importati ${importedCount} mesi in locale (Firestore ha bloccato il salvataggio cloud: controlla le Regole).`, 'info');
+          } else {
+            showStatus(`Importati o aggiornati ${importedCount} mesi con successo!`, 'success');
+          }
+        } catch (err) {
+          showStatus(`Errore nella lettura del file JSON: ${err?.message || 'formato non valido'}.`, 'error');
+        } finally {
+          event.target.value = '';
+        }
+      };
+
+      reader.onerror = () => {
+        showStatus('Impossibile leggere il file selezionato.', 'error');
+        event.target.value = '';
+      };
+
+      reader.readAsText(file, 'utf-8');
+    }
+
+    function showAlert(message, variant = 'danger') {
+      alertBox.classList.remove(
+        'hidden',
+        'bg-red-500/15', 'border-red-400/35', 'text-red-200',
+        'bg-amber-500/15', 'border-amber-400/35', 'text-amber-200'
+      );
+      if (variant === 'warning') {
+        alertBox.classList.add('bg-amber-500/15', 'border-amber-400/35', 'text-amber-200');
+      } else {
+        alertBox.classList.add('bg-red-500/15', 'border-red-400/35', 'text-red-200');
+      }
+      alertBox.textContent = message;
+    }
+
+    function hideAlert() {
+      alertBox.classList.add('hidden');
+      alertBox.textContent = '';
+    }
+
+    function setMode(nextMode) {
+      if (nextMode !== 'proporzionale' && nextMode !== 'risparmio_20') return;
+      currentMode = nextMode;
+      const isProp = currentMode === 'proporzionale';
+
+      const btnProp = document.getElementById('btnProporzionale');
+      const btnFix20 = document.getElementById('btnRisparmio20');
+      btnProp?.classList.toggle('active', isProp);
+      btnProp?.setAttribute('aria-selected', String(isProp));
+      btnFix20?.classList.toggle('active', !isProp);
+      btnFix20?.setAttribute('aria-selected', String(!isProp));
+
+      document.getElementById('subDesideri').textContent = isProp
+        ? '60% del residuo dopo spese fisse'
+        : 'Residuo dopo risparmio fisso al 20%';
+      document.getElementById('subRisparmi').textContent = isProp
+        ? '40% del residuo dopo spese fisse'
+        : '20% fisso del reddito netto';
+
+      calculateBudget();
+    }
+
+    function updateDonutArc(elementId, percentValue, startPercent) {
+      const arc = document.getElementById(elementId);
+      if (!arc) return;
+      const clampedPct = Math.max(0, Math.min(100, percentValue));
+      arc.style.strokeDasharray = `${(clampedPct / 100) * DONUT_CIRCUMFERENCE} ${DONUT_CIRCUMFERENCE}`;
+      arc.style.strokeDashoffset = `${-((Math.max(0, startPercent) / 100) * DONUT_CIRCUMFERENCE)}`;
+    }
+
+    function setCenterFocus(label, euroElementId, pctElementId, accentColor) {
+      const euroText = document.getElementById(euroElementId)?.textContent || '0,00 €';
+      const pctText = document.getElementById(pctElementId)?.textContent || '0,0%';
+      const cLabel = document.getElementById('centerLabel');
+      const cAmount = document.getElementById('centerAmount');
+      const cPct = document.getElementById('centerPct');
+
+      cLabel.textContent = label;
+      cAmount.textContent = euroText;
+      cPct.textContent = pctText + ' del netto';
+      cPct.style.color = accentColor;
+    }
+
+    function clearCenterFocus() {
+      const income = Math.max(0, parseFloat(incomeInput.value) || 0);
+      const fixed = Math.max(0, parseFloat(fixedInput.value) || 0);
+      const remaining = Math.max(0, income - fixed);
+      const cLabel = document.getElementById('centerLabel');
+      const cAmount = document.getElementById('centerAmount');
+      const cPct = document.getElementById('centerPct');
+      const cRem = document.getElementById('centerRemaining');
+
+      cLabel.textContent = 'Netto mensile';
+      cAmount.textContent = formatEuro(income);
+      cPct.textContent = income > 0 ? '100,0%' : '0,0%';
+      cPct.style.color = '#7dd3fc';
+      if (cRem) cRem.textContent = `Residuo: ${formatEuro(remaining)}`;
+    }
+
+    function calculateBudget() {
+      const income = Math.max(0, parseFloat(incomeInput.value) || 0);
+      const fixed = Math.max(0, parseFloat(fixedInput.value) || 0);
+      const remaining = Math.max(0, income - fixed);
+
+      hideAlert();
+
+      let wants = 0;
+      let savings = 0;
+
+      if (income <= 0) {
+        showAlert('Inserisci un reddito netto mensile maggiore di 0,00 € per calcolare la ripartizione.', 'warning');
+      } else if (fixed > income) {
+        showAlert(
+          `Attenzione: le spese fisse (${formatEuro(fixed)}) superano il reddito netto di ${formatEuro(fixed - income)}.`,
+          'danger'
+        );
+      } else if (currentMode === 'proporzionale') {
+        wants = remaining * 0.60;
+        savings = remaining * 0.40;
+      } else {
+        const targetSavings20 = income * 0.20;
+        if (targetSavings20 > remaining) {
+          savings = remaining;
+          wants = 0;
+          showAlert(
+            `Avviso: il 20% fisso (${formatEuro(targetSavings20)}) supera il residuo (${formatEuro(remaining)}). Tutto il residuo è stato assegnato ai Risparmi.`,
+            'warning'
+          );
+        } else {
+          savings = targetSavings20;
+          wants = remaining - savings;
+        }
+      }
+
+      const pctFixed = income > 0 ? (fixed / income) * 100 : 0;
+      const pctWants = income > 0 ? (wants / income) * 100 : 0;
+      const pctSavings = income > 0 ? (savings / income) * 100 : 0;
+
+      latestCalculation = { income, fixed, remaining, wants, savings, pctFixed, pctWants, pctSavings };
+
+      document.getElementById('euroBisogni').textContent = formatEuro(fixed);
+      document.getElementById('pctBisogni').textContent = formatPercent(pctFixed);
+      document.getElementById('euroDesideri').textContent = formatEuro(wants);
+      document.getElementById('pctDesideri').textContent = formatPercent(pctWants);
+      document.getElementById('euroRisparmi').textContent = formatEuro(savings);
+      document.getElementById('pctRisparmi').textContent = formatPercent(pctSavings);
+
+      const visualFixedPct = Math.min(100, pctFixed);
+      updateDonutArc('arcBisogni', visualFixedPct, 0);
+      updateDonutArc('arcDesideri', pctWants, visualFixedPct);
+      updateDonutArc('arcRisparmi', pctSavings, visualFixedPct + pctWants);
+      clearCenterFocus();
+    }
+
+    window.switchView = switchView;
+    window.resetInputsToZero = resetInputsToZero;
+    window.saveCurrentMonth = saveCurrentMonth;
+    window.setMode = setMode;
+    window.setCenterFocus = setCenterFocus;
+    window.clearCenterFocus = clearCenterFocus;
+    window.loadRecordIntoCalculator = loadRecordIntoCalculator;
+    window.deleteRecord = deleteRecord;
+    window.exportJSON = exportJSON;
+    window.exportCSV = exportCSV;
+
+    document.getElementById('btnGoogleLogin')?.addEventListener('click', handleGoogleLogin);
+    document.getElementById('btnGoogleLogout')?.addEventListener('click', handleGoogleLogout);
+
+    incomeInput.addEventListener('input', () => {
+      syncSliderWithInput();
+      calculateBudget();
+    });
+
+    incomeSlider.addEventListener('input', () => {
+      incomeInput.value = incomeSlider.value;
+      calculateBudget();
+    });
+
+    fixedInput.addEventListener('input', calculateBudget);
+
+    document.getElementById('yearFilter')?.addEventListener('change', renderReport);
+    document.getElementById('sortOrderBtn')?.addEventListener('click', () => {
+      sortDirection = sortDirection === 'desc' ? 'asc' : 'desc';
+      renderReport();
+    });
+    document.getElementById('importFileInput')?.addEventListener('change', handleImportJSON);
+
+    if (monthPicker && !monthPicker.value) {
+      monthPicker.value = getCurrentYearMonth();
+    }
+    incomeInput.value = '0';
+    fixedInput.value = '0';
+    incomeSlider.value = '0';
+    calculateBudget();
+    initFirebase();
+  </script>
+</body>
+</html>
